@@ -1,0 +1,4 @@
+name = GSP Theme Blocks
+description = Defines blocks that make up common parts of the Global Support Programme Theme.
+package = GSP Modules
+core = 7.x

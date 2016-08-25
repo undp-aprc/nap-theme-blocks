@@ -1,0 +1,183 @@
+<?php
+
+function nap_theme_blocks_block_info() {
+
+    $items['nap_slides'] = array(
+        'info' => t('NAP-GSP Homepage Slider'),
+        'cache' => DRUPAL_CACHE_GLOBAL,
+        'visibility' => BLOCK_VISIBILITY_LISTED
+    );
+    $items['ldc_negotiator_slides'] = array(
+        'info' => t('LDC Negotiator Slider'),
+        'cache' => DRUPAL_CACHE_GLOBAL,
+        'visibility' => BLOCK_VISIBILITY_LISTED
+    );
+    $items['nap_page_banner_block'] = array(
+        'info' => t('NAP Page Banner Block'),
+        'cache' => DRUPAL_GLOBAL_CACHE,
+        'visibility' => BLOCK_VISIBILITY_NOTLISTED
+    );
+    $items['ldc_negotiator_page_banner_block'] = array(
+        'info' => t('LDC Negotiators Page Banner Block'),
+        'cache' => DRUPAL_GLOBAL_CACHE,
+        'visibility' => BLOCK_VISIBILITY_NOTLISTED
+    );
+    $items['nap_footer_gsp'] = array(
+        'info' => t('NAP Footer for GSP'),
+        'cache' => DRUPAL_CACHE_GLOBAL,
+        'visibility' => BLOCK_VISIBILITY_LISTED
+    );
+    $items['ldc_negotiators_footer'] = array(
+        'info' => t('LDC Negotiators Footer'),
+        'cache' => DRUPAL_CACHE_GLOBAL,
+        'visibility' => BLOCK_VISIBILITY_LISTED
+    );
+    return $items;
+}
+
+/* hook_block_view() */
+function nap_theme_blocks_block_view($delta) {
+    $module_path = drupal_get_path('module','nap_theme_blocks');
+    $block = array();
+    switch($delta) {
+        case 'nap_gsp_page_main_menu':
+            $block['gsp_page_main_menu'] = array(
+                'subject' => t('GSP Page Main Menu'),
+                '#theme' => 'gsp_page_main_menu_block'
+            );
+            break;
+        case 'nap_slides':
+            $block['content'] = array(
+                'subject' => t('NAP Slides'),
+                '#theme' => 'nap_slides',
+                '#theme_wrappers' => array(
+                    'cca_slideshow_container',
+                ),
+                '#dom_variables' => array(
+
+                ),
+                '#attached' => array(
+                    'js' => array(
+                        $module_path.'/js/plugins/jquery.slides.min.js' => array(
+                            'type' => 'file',
+                        ),
+                        $module_path.'/js/attach.js' => array(
+                            'type' => 'file',
+                        ),
+                    ),
+                ),
+            );
+            break;
+        case 'ldc_negotiator_slides':
+            $block['content'] = array(
+                'subject' => t('LDC Negotiator Slides'),
+                '#theme' => 'ldc_negotiator_slides',
+                '#theme_wrappers' => array(
+                    'cca_slideshow_container',
+                ),
+                '#dom_variables' => array(
+
+                ),
+                '#attached' => array(
+                    'js' => array(
+                        $module_path.'/js/plugins/jquery.slides.min.js' => array(
+                            'type' => 'file',
+                        ),
+                        $module_path.'/js/attach.js' => array(
+                            'type' => 'file',
+                        ),
+                    ),
+                ),
+            );
+            break;
+        case 'nap_page_banner_block':
+            $block['content'] = array(
+                'subject' => t('NAP GSP Page Banner Block'),
+                '#theme' => 'nap_page_banner_block'
+            );
+            break;
+        case 'ldc_negotiator_page_banner_block':
+            $block['content'] = array(
+                'subject' => t('LDC Negotiators Page Banner Block'),
+                '#theme' => 'ldc_negotiators_page_banner_block'
+            );
+            break;
+        case 'nap_footer_gsp':
+            $block['content'] = array(
+                'subject' => t('NAP GSP Footer'),
+                '#theme' => 'nap_footer_gsp'
+            );
+            break;
+        case 'ldc_negotiators_footer':
+            $block['content'] = array(
+                'subject' => t('NAP GSP Footer'),
+                '#theme' => 'ldc_negotiators_footer'
+            );
+            break;
+    }
+    return $block;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function nap_theme_blocks_theme($existing, $type, $theme, $path) {
+    return array(
+        'nap_slides' => array(
+            'path' => $path.'/templates/',
+            'template' => 'nap-slides',
+            'render element' => 'elements'
+        ),
+        'ldc_negotiator_slides' => array(
+            'path' => $path.'/templates/',
+            'template' => 'ldc-negotiator-slides',
+            'render element' => 'elements'
+        ),
+        'nap_page_banner_block' => array(
+            'path' => $path.'/templates/',
+            'template' => 'nap-page-banner',
+            'render element' => 'elements'
+        ),
+        'ldc_negotiators_page_banner_block' => array(
+            'path' => $path.'/templates/',
+            'template' => 'ldc-negotiators-page-banner',
+            'render element' => 'elements'
+        ),
+        'nap_footer_gsp' => array(
+            'path' => $path.'/templates/',
+            'template' => 'nap-footer-gsp',
+            'render element' => 'elements'
+        ),
+        'ldc_negotiators_footer' => array(
+            'path' => $path.'/templates/',
+            'template' => 'ldc-negotiators-footer',
+            'render element' => 'elements'
+        ),
+    );
+}
+
+function nap_theme_blocks_preprocess_nap_slides(&$variables) {
+    $nodes = array();
+    $items = entityqueue_subqueue_load('nap_gsp_page_slider')->eq_node['und'];
+
+    foreach ($items as $item) {
+        $node = node_load($item['target_id']);
+        $nodes[] = node_view($node, 'full_screen_slide');
+    }
+    $variables['nodes'] = $nodes;
+}
+
+function nap_theme_blocks_preprocess_ldc_negotiator_slides(&$variables) {
+    $nodes = array();
+    $items = entityqueue_subqueue_load('ldc_negotiators_page_slider')->eq_node['und'];
+
+    foreach ($items as $item) {
+        $node = node_load($item['target_id']);
+        $nodes[] = node_view($node, 'full_screen_slide');
+    }
+    $variables['nodes'] = $nodes;
+}
+
+
+?>
+
