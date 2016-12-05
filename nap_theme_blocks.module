@@ -178,6 +178,3 @@ function nap_theme_blocks_preprocess_ldc_negotiator_slides(&$variables) {
     $variables['nodes'] = $nodes;
 }
 
-
-?>
-
